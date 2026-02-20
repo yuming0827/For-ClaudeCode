@@ -1,0 +1,43 @@
+# Core
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+websockets==12.0
+python-dotenv==1.0.1
+pydantic==2.7.1
+pydantic-settings==2.2.1
+
+# Data & Analysis
+pandas==2.2.2
+numpy==1.26.4
+ta==0.11.0
+scipy==1.13.0
+statsmodels==0.14.2
+
+# Market Data
+ccxt==4.3.24
+yfinance==0.2.38
+requests==2.32.2
+aiohttp==3.9.5
+websocket-client==1.8.0
+
+# Database
+sqlalchemy==2.0.30
+asyncpg==0.29.0
+alembic==1.13.1
+
+# Notifications
+python-telegram-bot==21.3
+line-bot-sdk==3.9.0
+
+# Auth & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.9
+
+# Backtest
+vectorbt==0.26.1
+
+# Utilities
+python-dateutil==2.9.0.post0
+pytz==2024.1
+apscheduler==3.10.4

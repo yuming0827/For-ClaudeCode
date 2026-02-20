@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: #30363d #0d1117;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track { background: #0d1117; }
+  ::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+  body {
+    @apply bg-surface text-gray-100 font-mono antialiased;
+    min-height: 100vh;
+  }
+
+  /* Selection color */
+  ::selection {
+    background: rgba(88, 166, 255, 0.3);
+    color: inherit;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface-50 border border-border rounded-lg p-4;
+  }
+
+  .card-sm {
+    @apply bg-surface-50 border border-border rounded-md p-3;
+  }
+
+  .stat-positive { @apply text-accent-green; }
+  .stat-negative { @apply text-accent-red; }
+  .stat-neutral  { @apply text-gray-400; }
+
+  .btn {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-md font-mono text-sm
+           transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-accent-blue text-surface hover:bg-blue-400 active:bg-blue-600;
+  }
+  .btn-danger {
+    @apply btn bg-accent-red/20 text-accent-red border border-accent-red/40
+           hover:bg-accent-red/30;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-gray-400 hover:text-gray-100 hover:bg-surface-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-mono;
+  }
+  .badge-green  { @apply badge bg-accent-green/20 text-accent-green; }
+  .badge-red    { @apply badge bg-accent-red/20 text-accent-red; }
+  .badge-yellow { @apply badge bg-accent-yellow/20 text-accent-yellow; }
+  .badge-blue   { @apply badge bg-accent-blue/20 text-accent-blue; }
+  .badge-gray   { @apply badge bg-surface-300 text-gray-400; }
+
+  .table-row {
+    @apply border-b border-border last:border-0 hover:bg-surface-100 transition-colors;
+  }
+
+  .input {
+    @apply bg-surface-100 border border-border rounded-md px-3 py-2 text-sm
+           text-gray-100 placeholder:text-gray-500 focus:outline-none
+           focus:ring-1 focus:ring-accent-blue focus:border-accent-blue
+           transition-colors w-full;
+  }
+
+  .label { @apply block text-xs text-gray-500 mb-1 uppercase tracking-wider; }
+
+  /* Lightweight Charts container */
+  .tv-chart {
+    @apply rounded-lg overflow-hidden border border-border;
+  }
+}

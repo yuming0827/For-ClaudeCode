@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Pikachu AR ⚡</title>
+
+    <!-- A-Frame 1.4.2 -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- AR.js 3.4.5 -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { overflow: hidden; background: #000; }
+
+        /* Back button */
+        .back-btn {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 9999;
+            background: rgba(0,0,0,0.62);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Status hint bar */
+        #hint {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.72);
+            color: white;
+            border-radius: 50px;
+            padding: 11px 28px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            z-index: 9999;
+            text-align: center;
+            white-space: nowrap;
+            transition: background 0.4s, opacity 0.6s;
+            backdrop-filter: blur(4px);
+        }
+
+        #hint.found {
+            background: rgba(59,76,202,0.85);
+        }
+
+        #hint.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Fullscreen camera canvas */
+        .a-canvas {
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn">← 返回</a>
+    <div id="hint">📷 將鏡頭對準 Hiro 標記</div>
+
+    <!-- ============================================================
+         A-Frame AR Scene
+         ============================================================ -->
+    <a-scene
+        vr-mode-ui="enabled: false"
+        renderer="logarithmicDepthBuffer: true; precision: medium;"
+        embedded
+        arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+    >
+
+        <!-- ── Hiro Marker ── -->
+        <a-marker preset="hiro" id="marker" smooth="true" smoothCount="5" smoothTolerance="0.01" smoothThreshold="2">
+
+            <!--
+                ===================================================
+                PIKACHU 3D MODEL — built from A-Frame primitives
+                ===================================================
+                Root entity: bounce animation (up-down)
+                             + slow Y-axis rotation (show all sides)
+            -->
+            <a-entity
+                id="pikachu"
+                position="0 0 0"
+                animation="property: position;
+                           from: 0 0 0; to: 0 0.18 0;
+                           dir: alternate; dur: 800;
+                           loop: true; easing: easeInOutSine"
+                animation__spin="property: rotation;
+                                 from: 0 0 0; to: 0 360 0;
+                                 dur: 7000; loop: true; easing: linear"
+            >
+
+                <!-- ── FEET (brown) ── -->
+                <a-sphere color="#C97B35"
+                    position="-0.19 0.06 0.1"
+                    radius="0.12" scale="1.55 0.52 1.2">
+                </a-sphere>
+                <a-sphere color="#C97B35"
+                    position="0.19 0.06 0.1"
+                    radius="0.12" scale="1.55 0.52 1.2">
+                </a-sphere>
+
+                <!-- ── LEGS ── -->
+                <a-sphere color="#FFD700"
+                    position="-0.18 0.23 0"
+                    radius="0.15" scale="0.85 1.22 0.82">
+                </a-sphere>
+                <a-sphere color="#FFD700"
+                    position="0.18 0.23 0"
+                    radius="0.15" scale="0.85 1.22 0.82">
+                </a-sphere>
+
+                <!-- ── BODY ── -->
+                <a-sphere color="#FFD700"
+                    position="0 0.55 0"
+                    radius="0.38" scale="1 1.18 0.94">
+                </a-sphere>
+
+                <!-- Back stripes (2 horizontal brown lines) -->
+                <a-box color="#C97B35"
+                    position="0 0.68 -0.355"
+                    width="0.43" height="0.065" depth="0.035">
+                </a-box>
+                <a-box color="#C97B35"
+                    position="0 0.52 -0.355"
+                    width="0.43" height="0.065" depth="0.035">
+                </a-box>
+
+                <!-- ── LEFT ARM (waving animation) ── -->
+                <a-entity
+                    position="-0.46 0.63 0"
+                    animation="property: rotation;
+                               from: -25 0 0; to: 25 0 0;
+                               dir: alternate; dur: 550;
+                               loop: true; easing: easeInOutSine"
+                >
+                    <a-sphere color="#FFD700"
+                        radius="0.16" scale="0.82 1.62 0.72">
+                    </a-sphere>
+                </a-entity>
+
+                <!-- ── RIGHT ARM (waving animation — opposite phase) ── -->
+                <a-entity
+                    position="0.46 0.63 0"
+                    animation="property: rotation;
+                               from: 25 0 0; to: -25 0 0;
+                               dir: alternate; dur: 550;
+                               loop: true; easing: easeInOutSine"
+                >
+                    <a-sphere color="#FFD700"
+                        radius="0.16" scale="0.82 1.62 0.72">
+                    </a-sphere>
+                </a-entity>
+
+                <!-- ── HEAD ── -->
+                <a-sphere color="#FFD700"
+                    position="0 1.06 0"
+                    radius="0.39">
+                </a-sphere>
+
+                <!-- Left eye — white -->
+                <a-sphere color="white"
+                    position="-0.155 1.13 0.34"
+                    radius="0.115">
+                </a-sphere>
+                <!-- Left eye — pupil -->
+                <a-sphere color="#0a0a0a"
+                    position="-0.148 1.11 0.43"
+                    radius="0.082">
+                </a-sphere>
+                <!-- Left eye — shine -->
+                <a-sphere color="white"
+                    position="-0.105 1.165 0.47"
+                    radius="0.028">
+                </a-sphere>
+
+                <!-- Right eye — white -->
+                <a-sphere color="white"
+                    position="0.155 1.13 0.34"
+                    radius="0.115">
+                </a-sphere>
+                <!-- Right eye — pupil -->
+                <a-sphere color="#0a0a0a"
+                    position="0.148 1.11 0.43"
+                    radius="0.082">
+                </a-sphere>
+                <!-- Right eye — shine -->
+                <a-sphere color="white"
+                    position="0.2 1.165 0.47"
+                    radius="0.028">
+                </a-sphere>
+
+                <!-- Nose -->
+                <a-sphere color="#8B4513"
+                    position="0 1.045 0.385"
+                    radius="0.036">
+                </a-sphere>
+
+                <!-- Mouth (two angled lines forming a smile) -->
+                <a-box color="#8B4513"
+                    position="-0.075 0.965 0.374"
+                    rotation="0 0 -42"
+                    width="0.038" height="0.13" depth="0.028">
+                </a-box>
+                <a-box color="#8B4513"
+                    position="0.075 0.965 0.374"
+                    rotation="0 0 42"
+                    width="0.038" height="0.13" depth="0.028">
+                </a-box>
+
+                <!-- Left cheek (red circle) -->
+                <a-sphere color="#FF6B6B"
+                    position="-0.31 1.0 0.24"
+                    radius="0.135" scale="1 0.85 0.58">
+                </a-sphere>
+                <!-- Right cheek (red circle) -->
+                <a-sphere color="#FF6B6B"
+                    position="0.31 1.0 0.24"
+                    radius="0.135" scale="1 0.85 0.58">
+                </a-sphere>
+
+                <!-- ── EARS ── -->
+                <!-- Left ear base (yellow) -->
+                <a-box color="#FFD700"
+                    position="-0.28 1.49 0"
+                    rotation="0 0 -13"
+                    width="0.16" height="0.38" depth="0.12">
+                </a-box>
+                <!-- Left ear tip (black) -->
+                <a-box color="#1a1a1a"
+                    position="-0.325 1.745 0"
+                    rotation="0 0 -13"
+                    width="0.16" height="0.2" depth="0.12">
+                </a-box>
+
+                <!-- Right ear base (yellow) -->
+                <a-box color="#FFD700"
+                    position="0.28 1.49 0"
+                    rotation="0 0 13"
+                    width="0.16" height="0.38" depth="0.12">
+                </a-box>
+                <!-- Right ear tip (black) -->
+                <a-box color="#1a1a1a"
+                    position="0.325 1.745 0"
+                    rotation="0 0 13"
+                    width="0.16" height="0.2" depth="0.12">
+                </a-box>
+
+                <!-- ── TAIL (lightning bolt — wagging animation) ── -->
+                <a-entity
+                    position="0 0.42 -0.42"
+                    animation="property: rotation;
+                               from: 0 0 -12; to: 0 0 12;
+                               dir: alternate; dur: 420;
+                               loop: true; easing: easeInOutSine"
+                >
+                    <!-- 3 segments forming a zig-zag lightning bolt -->
+                    <a-box color="#FFD700"
+                        position="-0.34 0.02 0"
+                        rotation="0 0 52"
+                        width="0.1" height="0.42" depth="0.09">
+                    </a-box>
+                    <a-box color="#FFD700"
+                        position="-0.14 0.3 0"
+                        rotation="0 0 -22"
+                        width="0.1" height="0.42" depth="0.09">
+                    </a-box>
+                    <a-box color="#FFD700"
+                        position="0.02 0.58 0"
+                        rotation="0 0 52"
+                        width="0.1" height="0.36" depth="0.09">
+                    </a-box>
+                </a-entity>
+
+                <!-- ── LIGHTNING SPARKS (decorative ⚡ emoji text) ── -->
+                <a-entity
+                    position="-0.52 1.12 0"
+                    animation="property: scale;
+                               from: 0.45 0.45 0.45; to: 1.1 1.1 1.1;
+                               dir: alternate; dur: 430; loop: true"
+                >
+                    <a-text value="⚡" color="#FFD700"
+                        scale="0.55 0.55 0.55" align="center">
+                    </a-text>
+                </a-entity>
+
+                <a-entity
+                    position="0.52 1.12 0"
+                    animation="property: scale;
+                               from: 1.1 1.1 1.1; to: 0.45 0.45 0.45;
+                               dir: alternate; dur: 430; loop: true"
+                >
+                    <a-text value="⚡" color="#FFD700"
+                        scale="0.55 0.55 0.55" align="center">
+                    </a-text>
+                </a-entity>
+
+                <!-- ── Name label (floating above head) ── -->
+                <a-entity position="0 2.02 0"
+                    animation="property: position;
+                               from: 0 2.02 0; to: 0 2.14 0;
+                               dir: alternate; dur: 1200; loop: true;
+                               easing: easeInOutSine"
+                >
+                    <a-text
+                        value="Pikachu!"
+                        align="center"
+                        color="#3B4CCA"
+                        width="3.2"
+                        font="exo2bold"
+                        wrap-count="12">
+                    </a-text>
+                </a-entity>
+
+            </a-entity>
+            <!-- end #pikachu -->
+
+        </a-marker>
+        <!-- end a-marker -->
+
+        <a-entity camera></a-entity>
+
+    </a-scene>
+
+    <script>
+        const marker = document.getElementById('marker');
+        const hint   = document.getElementById('hint');
+
+        marker.addEventListener('markerFound', () => {
+            hint.textContent = '⚡ 皮卡丘出現了！Pika Pika!';
+            hint.classList.add('found');
+            // Auto-hide hint after 3 s
+            setTimeout(() => hint.classList.add('hidden'), 3000);
+        });
+
+        marker.addEventListener('markerLost', () => {
+            hint.classList.remove('found', 'hidden');
+            hint.textContent = '📷 將鏡頭對準 Hiro 標記';
+        });
+    </script>
+
+</body>
+</html>

@@ -35,6 +35,7 @@ export default {
         'pulse-red': 'pulseRed 2s ease-in-out infinite',
         'fade-in': 'fadeIn 0.3s ease-out',
         'slide-up': 'slideUp 0.3s ease-out',
+        'scroll': 'scroll 40s linear infinite',
       },
       keyframes: {
         pulseGreen: {
@@ -47,6 +48,7 @@ export default {
         },
         fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
         slideUp: { from: { transform: 'translateY(8px)', opacity: '0' }, to: { transform: 'translateY(0)', opacity: '1' } },
+        scroll: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },
       },
     },
   },

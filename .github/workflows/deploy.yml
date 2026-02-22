@@ -35,9 +35,13 @@ jobs:
       - name: Build
         working-directory: frontend
         env:
+          # Set VITE_API_URL in repo variables to connect a real backend.
+          # Leave blank to run in demo mode (mock data, no backend needed).
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           VITE_WS_URL: ${{ vars.VITE_WS_URL }}
-          VITE_BASE_URL: /${{ github.event.repository.name }}/
+          VITE_DEMO_MODE: ${{ vars.VITE_API_URL == '' && 'true' || 'false' }}
+          # Base path = /<repo-name>/  (override with VITE_BASE_URL var if needed)
+          VITE_BASE_URL: ${{ vars.VITE_BASE_URL || format('/{0}/', github.event.repository.name) }}
         run: npm run build
 
       - name: Setup Pages

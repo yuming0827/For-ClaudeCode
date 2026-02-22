@@ -29,6 +29,8 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        with:
+          enablement: false
 
       # Upload only the AR app files from the repo root
       - name: Upload Pages artifact

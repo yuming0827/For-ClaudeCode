@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Save, Eye, EyeOff, Bell, Shield, Database, Wifi } from 'lucide-react'
+import { Save, Eye, EyeOff, Bell, Shield, Wifi } from 'lucide-react'
 import toast from 'react-hot-toast'
+import api from '../utils/api'
 
 interface EnvVar {
   key: string
@@ -33,11 +34,11 @@ export default function SettingsPage() {
     setVisible((v) => ({ ...v, [key]: !v[key] }))
 
   const save = () => {
-    // In a real deployment, these would be sent to the backend securely.
-    // Here we just show a confirmation toast (no actual storage).
     localStorage.setItem('VITE_API_URL', backendUrl)
     localStorage.setItem('VITE_WS_URL', wsUrl)
-    toast.success('Settings saved — reload to apply changes')
+    // Update axios instance immediately so new requests use the new URL
+    api.defaults.baseURL = backendUrl
+    toast.success('Settings saved — connection URL updated')
   }
 
   return (

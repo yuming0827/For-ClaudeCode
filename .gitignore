@@ -46,3 +46,5 @@ Thumbs.db
 *.sqlite
 *.db
 data/
+# Allow backend/data Python package (market data fetching module)
+!backend/data/

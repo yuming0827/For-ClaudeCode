@@ -6,7 +6,7 @@ Designed to run as a background asyncio task.
 import asyncio
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Optional, Any
 
 from ..config import settings
@@ -55,8 +55,8 @@ class QuantAgent:
             symbol=params.symbol,
             asset_class=params.asset_class,
             status=StrategyStatus.RUNNING,
-            started_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            started_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             params={**params.params, "stop_loss_pct": params.stop_loss_pct,
                    "take_profit_pct": params.take_profit_pct,
                    "position_size_pct": params.position_size_pct},
@@ -84,7 +84,7 @@ class QuantAgent:
         strat_obj = self._strategy_objs[strategy_id]
         strat_obj.update_params(new_params)
         self.strategies[strategy_id].params.update(new_params)
-        self.strategies[strategy_id].updated_at = datetime.utcnow()
+        self.strategies[strategy_id].updated_at = datetime.now(timezone.utc)
         return self.strategies[strategy_id]
 
     def get_all_states(self) -> list[StrategyState]:
@@ -115,7 +115,7 @@ class QuantAgent:
                 signal = strat_obj.generate_signal(df)
                 current_price = float(df["close"].iloc[-1])
                 state.current_price = current_price
-                state.updated_at = datetime.utcnow()
+                state.updated_at = datetime.now(timezone.utc)
 
                 await self._handle_signal(sid, signal, current_price, params)
 

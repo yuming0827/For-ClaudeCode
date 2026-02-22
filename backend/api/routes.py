@@ -3,7 +3,7 @@ FastAPI REST routes.
 """
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -44,7 +44,7 @@ DEMO_USERS = {"admin": "quantadmin2024", "trader": "tradersecret"}
 def create_token(username: str) -> str:
     payload = {
         "sub": username,
-        "exp": datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     }
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
@@ -259,7 +259,7 @@ async def get_portfolio():
     total_pnl = sum(s.pnl for s in states)
     positions = []
     return PortfolioSnapshot(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(timezone.utc),
         total_equity=100_000 + total_pnl,
         cash=100_000,
         invested=0,

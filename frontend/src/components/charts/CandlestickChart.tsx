@@ -114,7 +114,7 @@ export default function CandlestickChart({
         volumeRef.current?.setData(volumes)
         chartRef.current?.timeScale().fitContent()
       })
-      .catch((e) => setError(e.message))
+      .catch((e) => setError(e instanceof Error ? e.message : String(e)))
       .finally(() => setLoading(false))
   }, [symbol, assetClass, timeframe])
 

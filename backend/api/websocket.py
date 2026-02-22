@@ -4,7 +4,7 @@ WebSocket endpoints for real-time data streaming.
 import asyncio
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Set
 
 from fastapi import WebSocket, WebSocketDisconnect
@@ -49,7 +49,7 @@ async def strategy_broadcast_loop() -> None:
     while True:
         if manager.active:
             states = [s.model_dump(mode="json") for s in agent.get_all_states()]
-            await manager.broadcast({"type": "strategies", "data": states, "ts": datetime.utcnow().isoformat()})
+            await manager.broadcast({"type": "strategies", "data": states, "ts": datetime.now(timezone.utc).isoformat()})
         await asyncio.sleep(2)
 
 

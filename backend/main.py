@@ -62,10 +62,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — allow the GitHub Pages frontend
+# CORS — allow localhost dev servers + any GitHub Pages subdomain
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origin_regex=settings.ALLOWED_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

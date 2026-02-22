@@ -2,7 +2,7 @@
 Application configuration via environment variables.
 All sensitive values are loaded from .env — never hardcoded.
 """
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 
@@ -13,7 +13,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "change-me-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 h
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000", "https://*.github.io"]
+    ALLOWED_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+    # Regex for GitHub Pages — used separately in CORSMiddleware (allow_origins doesn't support globs)
+    ALLOWED_ORIGIN_REGEX: str = r"https://.*\.github\.io"
 
     # ── Database ───────────────────────────────────────────────────────────
     DATABASE_URL: str = "postgresql+asyncpg://quant:quant@localhost/quantdb"
@@ -47,9 +49,7 @@ class Settings(BaseSettings):
     DEFAULT_COMMISSION: float = 0.001   # 0.1 %
     DEFAULT_SLIPPAGE: float = 0.0005    # 0.05 %
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
 settings = Settings()

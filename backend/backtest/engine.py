@@ -186,11 +186,13 @@ class BacktestEngine:
         )
         metrics = compute_metrics(eq_series, trades, cfg.initial_capital)
         metrics["equity_curve"] = equity_curve
+        # Map internal side names to OrderSide enum values expected by schema
+        _side_map = {"long": "buy", "short": "sell"}
         metrics["trades"] = [
             {
-                "entry_time": str(t.entry_time),
-                "exit_time": str(t.exit_time) if t.exit_time else None,
-                "side": t.side,
+                "entry_time": t.entry_time,
+                "exit_time": t.exit_time,
+                "side": _side_map.get(t.side, t.side),
                 "entry_price": t.entry_price,
                 "exit_price": t.exit_price,
                 "quantity": t.quantity,

@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { RefreshCw } from 'lucide-react'
 import CandlestickChart from '../components/charts/CandlestickChart'
 import api from '../utils/api'
-import { useEffect } from 'react'
 
 interface Indicators {
   rsi_14: number; macd: number; macd_signal: number; macd_hist: number
@@ -26,7 +25,7 @@ export default function MarketPage() {
   const [indicators, setIndicators] = useState<Indicators | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const fetchIndicators = () => {
+  const fetchIndicators = useCallback(() => {
     setLoading(true)
     api.get('/market/indicators', {
       params: { symbol, asset_class: assetClass, timeframe },
@@ -34,9 +33,9 @@ export default function MarketPage() {
       .then(({ data }) => setIndicators(data))
       .catch(console.error)
       .finally(() => setLoading(false))
-  }
+  }, [symbol, assetClass, timeframe])
 
-  useEffect(() => { fetchIndicators() }, [symbol, timeframe])
+  useEffect(() => { fetchIndicators() }, [fetchIndicators])
 
   const selectSymbol = (sym: string, asset: string) => {
     setSymbol(sym)

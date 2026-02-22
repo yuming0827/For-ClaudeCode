@@ -15,7 +15,7 @@ interface Props {
 export default function EquityCurveChart({ data, initialCapital, height = 300 }: Props) {
   const min = Math.min(...data.map((d) => d.equity))
   const max = Math.max(...data.map((d) => d.equity))
-  const final = data.at(-1)?.equity ?? initialCapital
+  const final = data[data.length - 1]?.equity ?? initialCapital
   const isPositive = final >= initialCapital
 
   const formatted = data.map((d) => ({
